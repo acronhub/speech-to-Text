@@ -1,0 +1,54 @@
+# 文字起こし
+
+Google Cloud Speech-to-Textを利用して音声ファイルから文字起こしして、ローカルにテキストファイルを保存します
+
+## Features
+
+* GCSのアップロード
+  * 入力ファイル: mp4, m4a, mp3, wav
+* Speech-to-Textが読みやすいようにFLACファイルへの変換
+* HTMLからのすべて操作
+
+## Requirement
+
+* docker
+
+## Installation
+
+```bash
+docker-compose build
+```
+
+## Initialize
+
+* GCP サービスアカウントのJSONファイルをカレントフォルダに設置してください
+  ```bash
+  $ service-account.json
+  ```
+
+* 設定ファイルを作成してください
+  ```bash
+  $ touch instance/application.cfg
+  ```
+* 設定のファイルの記述
+  * GCSのバケット名
+  * 音声適正ブースト(https://cloud.google.com/speech-to-text/docs/boost?hl=ja)
+  ```bash
+  GCS_BUCKET_NAME = 'example-bucket'
+  SELECTED_PHRASES = [{"phrases": ["例"], "boost": 20}]
+  ```
+
+## Usage
+
+```bash
+docker-compose up -d
+```
+http://localhost:5000 にアクセス
+
+## Author
+
+* acronhub(https://github.com/acronhub)
+
+## License
+
+[MIT license](https://en.wikipedia.org/wiki/MIT_License).

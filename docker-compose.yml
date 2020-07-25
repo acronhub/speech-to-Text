@@ -1,0 +1,18 @@
+version: '3'
+
+services: 
+  flask:
+    build: 
+      context: .
+      dockerfile: ./docker/flask/Dockerfile
+    ports: 
+      - "5000:5000"
+    environment: 
+      TZ: "Asia/Tokyo"
+      FLASK_ENV: development
+      GOOGLE_APPLICATION_CREDENTIALS: /apps/service-account.json
+    tty: true
+    volumes: 
+      - "./apps:/apps"
+      - ../service-account.json:/apps/service-account.json
+  
