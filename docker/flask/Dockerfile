@@ -13,9 +13,6 @@ WORKDIR ${APP_DIR}
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-#    python-pyaudio \
-#    python3-pyaudio \
-#    portaudio19-dev \
     ffmpeg \
  && apt-get -y clean \
  && rm -rf /var/lib/apt/lists/*

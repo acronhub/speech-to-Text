@@ -20,21 +20,39 @@ def index():
         select_channels=set(app.config['SELECTED_CHANNEL'])
     )
 
+@app.route('/convert', methods=['POST'])
+def convert():
+    if 'convertFile' not in request.files:
+        return make_response(jsonify({'result':'convertFile is required.'}))
+
+    file = request.files['convertFile']
+    filename = file.filename
+
+    if filename == '':
+        return make_response(jsonify({'result':'filename must not empty.'}))
+
+    if file and allwed_file(filename):
+        convert_flac(filename)
+        return redirect("/")
+    else:
+        return make_response(jsonify({'result':'the file is not a Target file.'}))
+
 @app.route('/upload', methods=['POST'])
-def uploads_file():
+def upload():
     if 'uploadFile' not in request.files:
-        make_response(jsonify({'result':'uploadFile is required.'}))
+        return make_response(jsonify({'result':'uploadFile is required.'}))
 
     file = request.files['uploadFile']
     filename = file.filename
 
     if filename == '':
-        make_response(jsonify({'result':'filename must not empty.'}))
+        return make_response(jsonify({'result':'filename must not empty.'}))
 
-    if file and allwed_file(filename):
-        filepath, filename = convert_wav(file, filename)
-        upload_gcs(filepath, filename)
+    if file and filename.rsplit('.', 1)[1].lower() in 'flac':
+        upload_gcs(filename)
         return redirect("/")
+    else:
+        return make_response(jsonify({'result':'the file is not a FLAC file.'}))
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
@@ -46,24 +64,19 @@ def transcribe():
 def allwed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-# WAVファイルのコンバート
-def convert_wav(file, filename):
-    inputfilepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+# FLACファイルに変換
+def convert_flac(filename):
+    inputfilepath = os.path.join(app.config['INPUT_FOLDER'], filename)
 
     outputfile = filename.rsplit('.', 1)[0].lower()
     today = datetime.datetime.today().strftime("%Y%m%d-%H%M%S")
     outputfilename = '{0}-{1}.flac'.format(today, outputfile)
-    outputfilepath = os.path.join(app.config['UPLOAD_FOLDER'], outputfilename)
+    outputfilepath = os.path.join(app.config['CONVERTED_FOLDER'], outputfilename)
 
-    # ファイルの保存
-    file.save(inputfilepath)
-
-    # WAVファイル変換＆保存
+    # 変換＆保存
     stream = ffmpeg.input(inputfilepath)
     stream = ffmpeg.output(stream, outputfilepath)
     ffmpeg.run(stream)
-
-    os.remove(inputfilepath)
 
     return outputfilepath, outputfilename
 
@@ -101,9 +114,11 @@ def list_gcs():
     return blobs
 
 # GCS ファイルアップロード
-def upload_gcs(filepath, filename):
+def upload_gcs(filename):
+    inputfilepath = os.path.join(app.config['CONVERTED_FOLDER'], filename)
+
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(app.config['GCS_BUCKET_NAME'])
     blob = bucket.blob(filename)
-    blob.upload_from_filename(filename=filepath)
-    os.remove(filepath)
+    blob.upload_from_filename(filename=inputfilepath)
+    #os.remove(inputfilepath)

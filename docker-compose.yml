@@ -14,5 +14,5 @@ services:
     tty: true
     volumes: 
       - "./apps:/apps"
-      - ../service-account.json:/apps/service-account.json
+      - ./service-account.json:/apps/service-account.json
   

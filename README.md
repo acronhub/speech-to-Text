@@ -7,7 +7,6 @@ Google Cloud Speech-to-Textを利用して音声ファイルから文字起こ�
 * GCSのアップロード
   * 入力ファイル: mp4, m4a, mp3, wav
 * Speech-to-Textが読みやすいようにFLACファイルへの変換
-* HTMLからのすべて操作
 
 ## Requirement
 
@@ -43,7 +42,8 @@ docker-compose build
 ```bash
 docker-compose up -d
 ```
-http://localhost:5000 にアクセス
+data/input_fileフォルダに文字起こししたい動画・音声を設置してください。
+ブラウザで http://localhost:5000 にアクセス
 
 ## Author
 

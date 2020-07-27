@@ -1,10 +1,13 @@
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-uploads/*
-outputs/*
 instance/*
 
+data/input_file/*
+data/convert_file/*
+data/output_text/*
 !.gitkeep
 
 service-account.json

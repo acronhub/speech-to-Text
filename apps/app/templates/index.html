@@ -13,14 +13,31 @@
   <body>
     <div class="card m-3">
       <div class="card-header">
-        音声ファイルのアップロード
+        音声ファイルをFLACファイルに変換
       </div>
       <div class="card-body">
-        <form method="post" action="{{url_for('uploads_file')}}" enctype="multipart/form-data">
+        <form method="post" action="{{url_for('convert')}}" enctype="multipart/form-data">
           <div class="form-group">
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="inputFile" name="uploadFile">
+              <input type="file" accept="audio/*" class="custom-file-input" id="inputFile" name="convertFile">
               <label class="custom-file-label" for="inputFile">ファイルを選択</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">変換</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card m-3">
+      <div class="card-header">
+        FLAC音声ファイルをストレージにアップロード
+      </div>
+      <div class="card-body">
+        <form method="post" action="{{url_for('upload')}}" enctype="multipart/form-data">
+          <div class="form-group">
+            <div class="custom-file">
+              <input type="file" accept=".flac" class="custom-file-input" id="inputFile" name="uploadFile">
+              <label class="custom-file-label" for="inputFile">FLACファイルを選択</label>
             </div>
           </div>
           <button type="submit" class="btn btn-primary">アップロード</button>
