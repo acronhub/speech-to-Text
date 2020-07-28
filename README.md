@@ -42,8 +42,8 @@ docker-compose build
 ```bash
 docker-compose up -d
 ```
-data/input_fileフォルダに文字起こししたい動画・音声を設置してください。
-ブラウザで http://localhost:5000 にアクセス
+* data/input_fileフォルダに文字起こししたい動画・音声を設置してください。
+* ブラウザで http://localhost:5000 にアクセス
 
 ## Author
 

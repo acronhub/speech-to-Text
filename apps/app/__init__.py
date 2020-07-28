@@ -6,6 +6,7 @@ environment = os.getenv('FLASK_ENV', 'production')
 
 # Flask application
 app = Flask(__name__, instance_relative_config=True)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 from app import routes
 

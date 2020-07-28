@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, redirect, make_response
+from flask import Flask, flash, jsonify, request, render_template, redirect
 from google.cloud import storage
 from google.cloud import speech_v1p1beta1 as speech
 from google.cloud.speech_v1p1beta1 import enums
@@ -22,42 +22,37 @@ def index():
 
 @app.route('/convert', methods=['POST'])
 def convert():
-    if 'convertFile' not in request.files:
-        return make_response(jsonify({'result':'convertFile is required.'}))
-
     file = request.files['convertFile']
     filename = file.filename
 
     if filename == '':
-        return make_response(jsonify({'result':'filename must not empty.'}))
+        flash('ファイルを選択してください', 'danger')
 
     if file and allwed_file(filename):
         convert_flac(filename)
-        return redirect("/")
-    else:
-        return make_response(jsonify({'result':'the file is not a Target file.'}))
+        flash('FLACファイルを作成しました', 'success')
+
+    return redirect("/")
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    if 'uploadFile' not in request.files:
-        return make_response(jsonify({'result':'uploadFile is required.'}))
-
     file = request.files['uploadFile']
     filename = file.filename
 
     if filename == '':
-        return make_response(jsonify({'result':'filename must not empty.'}))
+        flash('ファイルを選択してください', 'danger')
 
     if file and filename.rsplit('.', 1)[1].lower() in 'flac':
         upload_gcs(filename)
-        return redirect("/")
-    else:
-        return make_response(jsonify({'result':'the file is not a FLAC file.'}))
+        flash('ストレージにアップロードしました', 'success')
+
+    return redirect("/")
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
     gcs_uri = os.path.join("gs://", app.config['GCS_BUCKET_NAME'], request.form.get('filename'))
     transcribe_gcs(gcs_uri, request.form.get('hertz'), request.form.get('channel'))
+    flash('文字起こししました', 'success')
     return redirect("/")
 
 # .があるかどうかのチェックと、拡張子の確認
